@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>dBBH’s Friendship Folder (prototype)</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#14213d;--mute:#5c6577;--line:#e2e6ef;--acc:#0a3d91;--acc2:#e8f0fe;--ok:#127a4a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1424;--card:#18203a;--ink:#eef1f8;--mute:#a3acc2;--line:#2a3558;--acc:#8ab4ff;--acc2:#1f2d55;--ok:#5fd39b}}
+:root[data-theme="dark"]{--bg:#0e1424;--card:#18203a;--ink:#eef1f8;--mute:#a3acc2;--line:#2a3558;--acc:#8ab4ff;--acc2:#1f2d55;--ok:#5fd39b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem;margin:4px 0 2px}
+h2{font-size:1.05rem;margin:18px 0 8px}
+.sub{color:var(--mute);font-size:.9rem;margin:0 0 12px}
+nav{display:flex;gap:6px;margin:12px 0;overflow-x:auto}
+nav button{flex:1;white-space:nowrap}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:9px 14px}
+button.on,button.pri{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chip{border-radius:99px;padding:4px 12px;font-size:.85rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:12px}
+.name{font-size:1.2rem;font-weight:700;margin:0}
+.meta{color:var(--mute);font-size:.9rem}
+.tag{display:inline-block;background:var(--acc2);color:var(--acc);border-radius:99px;padding:2px 10px;font-size:.8rem;margin:2px 4px 2px 0}
+.tag.sh{background:var(--acc);color:var(--bg)}
+.q{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);margin:12px 0 2px}
+.row{display:flex;gap:10px;margin-top:14px}.row button{flex:1}
+.empty{text-align:center;color:var(--mute);padding:28px 8px}
+.msgs{max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.m{max-width:80%;padding:7px 12px;border-radius:14px;background:var(--acc2)}
+.m.me{align-self:flex-end;background:var(--acc);color:var(--bg)}
+input,textarea{width:100%;font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);margin:4px 0 10px}
+label{font-size:.9rem;font-weight:600}
+.send{display:flex;gap:8px}.send input{margin:0}
+.ice{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}.ice button{font-size:.8rem;padding:4px 10px;border-radius:99px}
+.warn{color:#c0392b;font-size:.9rem}.ok{color:var(--ok);font-weight:600}
+.g{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.note{font-size:.8rem;color:var(--mute);text-align:center;margin-top:20px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>dBBH’s Friendship Folder</h1>
+<p class="sub">Name TBD. Prototype with sample members, so nothing here is real data.</p>
+<nav id="nav"></nav>
+
+<section id="discover">
+<div class="chips" id="modes"></div>
+<div class="chips" id="chipbar"></div>
+<div id="deck"></div>
+</section>
+<section id="matches" class="hide"></section>
+<section id="groups" class="hide"></section>
+<section id="me" class="hide">
+<div class="card">
+<p class="name">Your profile</p>
+<p class="meta">Update your bio and interests anytime. Your interests shape who shows up first for you.</p>
+<label>Name<input id="f-name"></label>
+<label>Major<input id="f-major" placeholder="e.g. Public Policy"></label>
+<label>Interests</label><div class="chips" id="myint"></div>
+<label>dBBH in 3 words<input id="f-three" placeholder="e.g. curious, collaborative, driven"></label>
+<label>Dream role in healthcare<input id="f-dream"></label>
+<label>Ask me about…<input id="f-ask"></label>
+<label>If I could fix one problem in the healthcare economy, I would…<input id="f-fix"></label>
+<label>Short bio<textarea id="f-bio" rows="3"></textarea></label>
+<label>Phone (shown only after a match)<input id="f-phone"></label>
+<label>LinkedIn<input id="f-li"></label>
+<label>Instagram<input id="f-ig"></label>
+<button class="pri" id="f-save">Save profile</button>
+<p id="f-msg"></p>
+</div>
+<div id="f-prev"></div>
+</section>
+
+<p class="note">Contact info appears only after both people choose “Let’s Chat!”</p>
+</div>
+
+<script>
+var INT=['Public health','Health tech','Policy','Pre-med','Consulting','Research','Global health','Finance','Food','Music','Sports','Outdoors'];
+var M=[
+{id:1,name:'Maya R.',yr:'Sophomore',major:'Public Policy',int:['Policy','Public health','Food'],three:'driven, curious, kind',dream:'Health policy advisor',ask:'Medicaid and the best tacos in Durham',fix:'make insurance paperwork understandable',li:'linkedin.com/in/sample-maya',ig:'@maya.sample',ph:'(555) 010-0001',likes:true},
+{id:2,name:'Jordan T.',yr:'Junior',major:'Biomedical Engineering',int:['Health tech','Research','Music'],three:'build, learn, repeat',dream:'Medical device founder',ask:'wearables and guitar',fix:'lower the cost of diagnostics',li:'linkedin.com/in/sample-jordan',ig:'@jordan.sample',ph:'(555) 010-0002',likes:true},
+{id:3,name:'Priya S.',yr:'Freshman',major:'Neuroscience',int:['Pre-med','Research','Food'],three:'open, hopeful, nerdy',dream:'Neurologist',ask:'surviving first-year chem',fix:'shorten wait times for specialists',li:'linkedin.com/in/sample-priya',ig:'@priya.sample',ph:'(555) 010-0003',likes:false},
+{id:4,name:'Alex K.',yr:'Senior',major:'Economics',int:['Consulting','Finance','Sports'],three:'strategic, calm, funny',dream:'Healthcare consultant',ask:'recruiting and intramural soccer',fix:'align incentives between payers and providers',li:'linkedin.com/in/sample-alex',ig:'@alex.sample',ph:'(555) 010-0004',likes:true},
+{id:5,name:'Sam L.',yr:'Freshman',major:'Global Health',int:['Global health','Public health','Outdoors'],three:'global, grounded, bold',dream:'WHO program officer',ask:'my summer at a community clinic',fix:'fund primary care in underserved areas',li:'linkedin.com/in/sample-sam',ig:'@sam.sample',ph:'(555) 010-0005',likes:false},
+{id:6,name:'Dana W.',yr:'Freshman',major:'Computer Science',int:['Health tech','Policy','Music'],three:'logic, empathy, coffee',dream:'Health data scientist',ask:'Python and playlists',fix:'make medical records portable',li:'linkedin.com/in/sample-dana',ig:'@dana.sample',ph:'(555) 010-0006',likes:true}
+];
+var G={social:[['#social-outings','Plan meetups around Durham'],['#food-and-coffee','Coffee runs and dinners'],['#first-years','Freshman hangout space']],
+work:[['#health-policy','Policy readings and events'],['#health-tech','Startups and digital health'],['#consulting-prep','Case practice'],['#research-chat','Finding labs and projects']]};
+var S={tab:'discover',view:'cards',filters:[],first:false,done:{},matches:[],chats:{},open:null,
+me:{name:'',major:'',three:'',dream:'',ask:'',fix:'',bio:'',phone:'',li:'',ig:'',int:[]}};
+var BLOCK=['idiot','stupid','hate','dumb'];
+var TABS=[['discover','Discover'],['matches','Matches'],['groups','Groups'],['me','My profile']];
+
+function $(i){return document.getElementById(i)}
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function shared(m){return m.int.filter(function(x){return S.me.int.indexOf(x)>-1})}
+function tagsOf(m){return m.int.map(function(x){return '<span class="tag'+(S.me.int.indexOf(x)>-1?' sh':'')+'">'+esc(x)+'</span>'}).join('')}
+function toggle(a,v){var k=a.indexOf(v);if(k>-1)a.splice(k,1);else a.push(v)}
+function chipRow(el,sel,fn){
+$(el).innerHTML=INT.map(function(i){return '<button class="chip'+(sel.indexOf(i)>-1?' on':'')+'" data-i="'+i+'">'+i+'</button>'}).join('');
+Array.prototype.forEach.call($(el).querySelectorAll('.chip'),function(b){b.onclick=function(){toggle(sel,b.getAttribute('data-i'));fn()}});
+}
+function deck(){
+var d=M.filter(function(m){return !S.done[m.id]&&(!S.filters.length||m.int.some(function(x){return S.filters.indexOf(x)>-1}))&&(!S.first||m.yr==='Freshman')});
+return d.map(function(m,i){return [m,i]}).sort(function(a,b){return shared(b[0]).length-shared(a[0]).length||a[1]-b[1]}).map(function(p){return p[0]});
+}
+function profile(m,skip){
+var n=shared(m).length;
+return '<div class="card"><div class="g"><p class="name">'+esc(m.name)+'</p>'+(n?'<span class="tag sh">Suggested for you · '+n+' shared</span>':'')+'</div>'
++'<div class="meta">'+esc(m.yr)+' · '+esc(m.major)+'</div><div style="margin-top:8px">'+tagsOf(m)+'</div>'
++'<div class="q">dBBH in 3 words</div>'+esc(m.three)+'<div class="q">Dream role</div>'+esc(m.dream)
++'<div class="q">Ask me about…</div>'+esc(m.ask)
++'<div class="q">If I could fix one problem in the healthcare economy, I would…</div>'+esc(m.fix)
++'<div class="row">'+(skip?'<button data-a="skip" data-id="'+m.id+'">Skip</button>':'')+'<button class="pri" data-a="chat" data-id="'+m.id+'">Let’s Chat!</button></div></div>';
+}
+function discover(){
+$('modes').innerHTML='<button class="chip'+(S.view==='cards'?' on':'')+'" data-v="cards">Card view</button><button class="chip'+(S.view==='feed'?' on':'')+'" data-v="feed">Feed view</button><button class="chip'+(S.first?' on':'')+'" data-v="first">Freshmen only</button>';
+Array.prototype.forEach.call($('modes').querySelectorAll('button'),function(b){b.onclick=function(){var v=b.getAttribute('data-v');if(v==='first')S.first=!S.first;else S.view=v;render()}});
+chipRow('chipbar',S.filters,render);
+var d=deck(),h='';
+if(!S.me.int.length)h+='<p class="meta">Tip: pick your interests in My profile and similar members will show up first.</p>';
+if(!d.length)h+='<div class="empty">No members match these filters right now.</div>';
+else if(S.view==='cards')h+=profile(d[0],true)+'<p class="meta" style="text-align:center">'+d.length+' left in this view</p>';
+else h+=d.map(function(m){return profile(m,false)}).join('');
+$('deck').innerHTML=h;
+Array.prototype.forEach.call($('deck').querySelectorAll('[data-a]'),function(b){b.onclick=function(){act(+b.getAttribute('data-id'),b.getAttribute('data-a'))}});
+}
+function act(id,a){
+S.done[id]=1;var m=M[id-1];
+if(a==='chat'){
+if(m.likes){S.matches.push(id);S.chats[id]=[{me:0,t:'Hi! Looks like we both wanted to chat. Tell me more about '+m.ask+'!'}];alert('It’s a match with '+m.name+'! Find them under Matches.')}
+else alert('Request sent to '+m.name+'. If they choose “Let’s Chat!” too, you’ll match.');}
+render();
+}
+function matches(){
+var h='';
+if(!S.matches.length)h='<div class="empty">No matches yet. Choose “Let’s Chat!” on a few profiles.</div>';
+S.matches.forEach(function(id){var m=M[id-1];
+h+='<div class="card"><p class="name">'+esc(m.name)+'</p><div class="meta">'+esc(m.major)+'</div>'
++'<button class="op" data-o="'+id+'" style="margin-top:8px">'+(S.open===id?'Close chat':'Open chat')+'</button>';
+if(S.open===id){
+var ice=['What’s your favorite spot in Durham?','What made you join dBBH?','Ask me about… '+m.ask+'?','Coffee this week?'];
+h+='<div class="meta" style="margin-top:10px">Phone: '+esc(m.ph)+' · LinkedIn: '+esc(m.li)+' · Instagram: '+esc(m.ig)+'</div>'
++'<div class="msgs">'+S.chats[id].map(function(c){return '<div class="m'+(c.me?' me':'')+'">'+esc(c.t)+'</div>'}).join('')+'</div>'
++'<div class="q">Ice-breakers</div><div class="ice">'+ice.map(function(t,i){return '<button data-ice="'+i+'">'+esc(t)+'</button>'}).join('')+'</div>'
++'<div class="send"><input id="mi" placeholder="Type a message"><button class="pri" id="ms">Send</button></div>';
+}
+h+='</div>';});
+$('matches').innerHTML=h;
+Array.prototype.forEach.call($('matches').querySelectorAll('.op'),function(b){b.onclick=function(){var i=+b.getAttribute('data-o');S.open=S.open===i?null:i;render()}});
+if($('ms')){
+var id=S.open,m=M[id-1];
+var ice=['What’s your favorite spot in Durham?','What made you join dBBH?','Ask me about… '+m.ask+'?','Coffee this week?'];
+Array.prototype.forEach.call($('matches').querySelectorAll('[data-ice]'),function(b){b.onclick=function(){$('mi').value=ice[+b.getAttribute('data-ice')];$('mi').focus()}});
+$('ms').onclick=function(){var v=$('mi').value.trim();if(!v)return;S.chats[id].push({me:1,t:v});render();
+setTimeout(function(){S.chats[id].push({me:0,t:'Love that. Want to grab coffee at the Brodhead Center?'});render()},900)};}
+}
+function groups(){
+function sec(t,a){return '<h2>'+t+'</h2>'+a.map(function(g){return '<div class="card g"><div><b>'+esc(g[0])+'</b><div class="meta">'+esc(g[1])+'</div></div><button data-s="'+esc(g[0])+'">Join on Slack</button></div>'}).join('')}
+$('groups').innerHTML='<p class="meta">Find people with shared interests, then continue the conversation in Slack.</p>'+sec('Social',G.social)+sec('Work',G.work)
++'<h2>Monthly hangouts (idea)</h2><div class="card"><div class="meta">Outings to local Durham businesses once every month or two, like a coffee shop crawl, a food truck night or a bowling night. Sponsorships are an open question.</div></div>';
+Array.prototype.forEach.call($('groups').querySelectorAll('[data-s]'),function(b){b.onclick=function(){alert('This would open '+b.getAttribute('data-s')+' in the dBBH Slack.')}});
+}
+$('f-save').onclick=function(){
+var f={name:$('f-name').value.trim(),major:$('f-major').value.trim(),three:$('f-three').value.trim(),dream:$('f-dream').value.trim(),ask:$('f-ask').value.trim(),fix:$('f-fix').value.trim(),bio:$('f-bio').value.trim(),phone:$('f-phone').value.trim(),li:$('f-li').value.trim(),ig:$('f-ig').value.trim()};
+var all=Object.keys(f).map(function(k){return f[k]}).join(' ').toLowerCase(),bad=BLOCK.filter(function(w){return all.indexOf(w)>-1});
+if(bad.length){$('f-msg').className='warn';$('f-msg').textContent='Please remove: '+bad.join(', ');$('f-prev').innerHTML='';return}
+if(!f.name){$('f-msg').className='warn';$('f-msg').textContent='Add your name first.';return}
+f.int=S.me.int;S.me=f;
+$('f-msg').className='ok';$('f-msg').textContent='Saved. Suggestions on Discover now reflect your interests. This is how others see you:';
+$('f-prev').innerHTML='<div class="card"><p class="name">'+esc(f.name)+'</p><div class="meta">'+esc(f.major)+'</div><div style="margin-top:8px">'+f.int.map(function(x){return '<span class="tag">'+esc(x)+'</span>'}).join('')+'</div>'
++'<div class="q">dBBH in 3 words</div>'+esc(f.three||'—')+'<div class="q">Dream role</div>'+esc(f.dream||'—')+'<div class="q">Ask me about…</div>'+esc(f.ask||'—')
++'<div class="q">If I could fix one problem…</div>'+esc(f.fix||'—')+'<div class="q">Bio</div>'+esc(f.bio||'—')+'</div>';
+render();
+};
+function render(){
+$('nav').innerHTML=TABS.map(function(t){return '<button data-t="'+t[0]+'" class="'+(S.tab===t[0]?'on':'')+'">'+t[1]+(t[0]==='matches'?' ('+S.matches.length+')':'')+'</button>'}).join('');
+Array.prototype.forEach.call($('nav').querySelectorAll('button'),function(b){b.onclick=function(){S.tab=b.getAttribute('data-t');render()}});
+TABS.forEach(function(t){$(t[0]).className=S.tab===t[0]?'':'hide'});
+chipRow('myint',S.me.int,function(){render()});
+discover();matches();groups();
+}
+render();
+</script>
+</body>
+</html>
