@@ -74,13 +74,14 @@ label{font-size:12.5px;font-weight:600;color:var(--dark)}
 <div class="eyebrow">Members only</div>
 <h1 class="page-hed">Community <i>Builder</i></h1>
 <p class="sub">Find dBBH members with similar professional interests and connect. Log in with your Duke email.</p>
-<div id="st1"><label>Duke email</label><input class="f-input" id="em" type="email" placeholder="netid@duke.edu"><button class="btn-dark" id="send">Send me a login link</button></div>
-<div id="st2" hidden><p class="ok">Check your Duke email. Click the link, or type the code below.</p><label>Code</label><input class="f-input" id="cd" maxlength="10" inputmode="numeric"><button class="btn-dark" id="ver">Log in</button></div>
+<div id="st1"><label>Duke email</label><input class="f-input" id="em" type="email" placeholder="netid@duke.edu"><button class="btn-dark" id="send">Email me a login code</button></div>
+<div id="st2" hidden><p class="ok">We emailed you a code. Type it below to log in.</p><label>Code</label><input class="f-input" id="cd" maxlength="10" inputmode="numeric"><button class="btn-dark" id="ver">Log in</button> <button class="btn-pale" id="back">Use a different email</button></div>
 <p class="err" id="aerr"></p>
 </div>
 </div>
 
 <div id="app" hidden>
+<p class="err" id="banner" style="background:#fbeceb;padding:12px 14px;border-radius:8px" hidden></p>
 <section id="p-dir">
 <div class="eyebrow">Community directory</div>
 <h1 class="page-hed">Find your <i>people</i></h1>
@@ -163,16 +164,22 @@ $('send').onclick=async function(){
   $('send').disabled=true;
   var r=await sb.auth.signInWithOtp({email:e,options:{emailRedirectTo:location.origin+location.pathname}});
   $('send').disabled=false;
-  if(r.error){$('aerr').textContent=r.error.message;return}
+  if(r.error){$('aerr').textContent=r.status===429||/rate/i.test(r.error.message)?'Too many login emails right now. Please wait a minute and try again.':r.error.message;return}
   S.email=e;$('st1').hidden=true;$('st2').hidden=false;
 };
 $('ver').onclick=async function(){
   $('aerr').textContent='';
   var r=await sb.auth.verifyOtp({email:S.email,token:$('cd').value.trim(),type:'email'});
-  if(r.error)$('aerr').textContent=r.error.message;
+  if(r.error)$('aerr').textContent='That code did not work or has expired. Request a new one. ('+r.error.message+')';
 };
+$('back').onclick=function(){$('st2').hidden=true;$('st1').hidden=false;$('aerr').textContent=''};
 $('out').onclick=function(){sb.auth.signOut()};
-sb.auth.onAuthStateChange(function(_e,session){S.U=session?session.user:null;start()});
+var lastId=null;
+sb.auth.onAuthStateChange(function(_e,session){
+  var u=session?session.user:null,id=u?u.id:null;
+  if(id===lastId&&_e!=='SIGNED_IN')return;
+  lastId=id;S.U=u;setTimeout(start,0);
+});
 
 async function start(){
   $('auth').hidden=!!S.U;$('app').hidden=!S.U;$('links').hidden=!S.U;$('out').hidden=!S.U;
@@ -181,12 +188,13 @@ async function start(){
 }
 async function load(){
   var r=await Promise.all([
-    sb.from('profiles').select('*').eq('id',S.U.id).maybeSingle(),
-    sb.from('directory').select('*').neq('id',S.U.id),
-    sb.from('likes').select('to_id'),
-    sb.rpc('my_matches')]);
+    sb.from('cb_profiles').select('*').eq('id',S.U.id).maybeSingle(),
+    sb.rpc('cb_directory'),
+    sb.from('cb_likes').select('to_id'),
+    sb.rpc('cb_my_matches')]);
   var bad=r.filter(function(x){return x.error})[0];
-  if(bad)toast('Database error: '+bad.error.message+'. Did you run setup.sql?');
+  $('banner').hidden=!bad;
+  if(bad)$('banner').textContent='Setup problem: '+bad.error.message+'. Make sure setup.sql was run in Supabase (new version with cb_ tables).';
   S.me=r[0].data;S.dir=r[1].data||[];S.liked={};(r[2].data||[]).forEach(function(x){S.liked[x.to_id]=1});S.matches=r[3].data||[];
   if(!S.me)S.tab='me';
   fillForm();render();
@@ -218,10 +226,10 @@ function dirRender(){
   Array.prototype.forEach.call($('list').querySelectorAll('[data-chat]'),function(b){b.onclick=function(){chat(b.getAttribute('data-chat'))}});
 }
 async function chat(id){
-  var r=await sb.from('likes').insert({from_id:S.U.id,to_id:id});
+  var r=await sb.from('cb_likes').insert({from_id:S.U.id,to_id:id});
   if(r.error&&r.error.code!=='23505'){toast(r.error.message);return}
   S.liked[id]=1;
-  var m=await sb.rpc('my_matches');S.matches=m.data||[];
+  var m=await sb.rpc('cb_my_matches');S.matches=m.data||[];
   toast(S.matches.some(function(x){return x.id===id})?'It’s a match! Their Duke email and phone are under Matches.':'Request sent. If they choose Let’s Chat! too, you’ll both get each other’s contact info.');
   render();
 }
@@ -263,7 +271,7 @@ $('save').onclick=async function(){
   if(!f.interests.length){e.textContent='Pick at least one professional interest.';return}
   if(bad.length){e.textContent='Please remove: '+bad.join(', ');return}
   e.textContent='';$('save').disabled=true;
-  var r=await sb.from('profiles').upsert(f);
+  var r=await sb.from('cb_profiles').upsert(f);
   $('save').disabled=false;
   if(r.error){e.textContent=r.error.message;return}
   toast('Profile saved.');S.tab='dir';await load();
@@ -272,7 +280,7 @@ $('save').onclick=async function(){
 /* ---------- ROUTING ---------- */
 function render(){
   $('links').innerHTML=TABS.map(function(t){return '<button class="nb'+(S.tab===t[0]?' active':'')+'" data-t="'+t[0]+'">'+t[1]+(t[0]==='mat'&&S.matches.length?' ('+S.matches.length+')':'')+'</button>'}).join('');
-  Array.prototype.forEach.call($('links').querySelectorAll('.nb'),function(b){b.onclick=async function(){S.tab=b.getAttribute('data-t');if(S.tab==='mat'||S.tab==='dir'){var m=await sb.rpc('my_matches');S.matches=m.data||S.matches}render()}});
+  Array.prototype.forEach.call($('links').querySelectorAll('.nb'),function(b){b.onclick=async function(){S.tab=b.getAttribute('data-t');if(S.tab==='mat'||S.tab==='dir'){var m=await sb.rpc('cb_my_matches');S.matches=m.data||S.matches}render()}});
   TABS.forEach(function(t){$('p-'+t[0]).hidden=S.tab!==t[0]});
   dirRender();matchRender();groupRender();profRender();
 }
