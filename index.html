@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dBBH · Community Builder</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+/* dBBH palette (same variable names as the main site) */
+:root{--black:#0D0D0D;--dark:#2B2B2B;--mid:#888;--sky:#7BAFD4;--slate:#2E4A5C;--gold:#C9A020;--stone:#E0DAD2;--offwhite:#F8F6F2}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--offwhite);color:var(--black)}
+nav{position:fixed;top:0;left:0;right:0;z-index:300;background:rgba(248,246,242,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--stone);padding:0 52px;display:flex;align-items:center;justify-content:space-between;height:60px}
+.nav-logo{display:flex;align-items:baseline;text-decoration:none}
+.nl-d{font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;color:var(--sky);line-height:1}
+.nl-bbh{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--black);line-height:1}
+.n-home{border:1px solid var(--stone);font:600 12px 'DM Sans',sans-serif;color:var(--dark);padding:7px 16px;border-radius:6px;text-decoration:none}
+.n-home:hover{border-color:var(--sky);color:var(--sky)}
+main{max-width:900px;margin:0 auto;padding:110px 28px 70px;min-height:100vh}
+@media(max-width:900px){nav{padding:0 16px}main{padding:96px 16px 60px}}
+</style>
+<link rel="stylesheet" href="community-builder.css">
+</head>
+<body>
+<nav>
+<a class="nav-logo" href="./"><span class="nl-d">d</span><span class="nl-bbh">BBH</span></a>
+<a class="n-home" id="home" href="#" hidden>← dBBH home</a>
+</nav>
+<main><div id="cb-root"></div></main>
+<noscript><p style="padding:100px 28px">Please turn on JavaScript to use the Community Builder.</p></noscript>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="community-builder.js"></script>
+<script>
+var h=(window.CB_CONFIG||{}).homeUrl;if(h){var a=document.getElementById('home');a.href=h;a.hidden=false}
+CBuilder.init();
+</script>
+</body></html>

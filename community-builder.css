@@ -1,0 +1,45 @@
+/* Community Builder styles. Everything is scoped to #cb-root so it can drop into another page.
+   It reuses the dBBH colour variables when the host page defines them, and falls back to the same values. */
+#cb-root{--c-black:var(--black,#0D0D0D);--c-dark:var(--dark,#2B2B2B);--c-mid:var(--mid,#888);--c-sky:var(--sky,#7BAFD4);--c-slate:var(--slate,#2E4A5C);--c-gold:var(--gold,#C9A020);--c-stone:var(--stone,#E0DAD2);--c-off:var(--offwhite,#F8F6F2);--c-pale:#C9D9E8;
+  font-family:'DM Sans',sans-serif;color:var(--c-dark);font-size:14px;line-height:1.5}
+#cb-root *{box-sizing:border-box}
+#cb-root [hidden]{display:none!important}
+#cb-root .cb-eyebrow{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--c-sky);display:flex;align-items:center;gap:10px;margin-bottom:12px}
+#cb-root .cb-eyebrow::before{content:'';width:24px;height:1px;background:var(--c-gold)}
+#cb-root .cb-hed{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:300;letter-spacing:-.02em;line-height:1.05;margin:0 0 8px;color:var(--c-black)}
+#cb-root .cb-hed i{color:var(--c-sky)}
+#cb-root .cb-p{font-size:15px;line-height:1.7;color:var(--c-mid);max-width:600px;margin:0 0 22px}
+#cb-root .cb-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+#cb-root .cb-tabs,#cb-root .cb-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+#cb-root .cb-bar .cb-tabs{margin:0}
+#cb-root .cb-chip{padding:7px 13px;border-radius:999px;border:1px solid var(--c-stone);background:#fff;font:12.5px 'DM Sans',sans-serif;color:var(--c-dark);cursor:pointer;transition:all .15s}
+#cb-root .cb-chip.on{background:var(--c-slate);border-color:var(--c-slate);color:#fff}
+#cb-root .cb-card{background:#fff;border:1px solid var(--c-stone);border-radius:10px;padding:20px;margin-bottom:14px;transition:box-shadow .2s}
+#cb-root .cb-card:hover{box-shadow:0 8px 30px rgba(0,0,0,.07)}
+#cb-root .cb-form{max-width:440px}
+#cb-root .cb-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+#cb-root .cb-nm{font-family:'Cormorant Garamond',serif;font-size:26px;line-height:1.1;color:var(--c-black)}
+#cb-root .cb-meta{font-size:12.5px;color:var(--c-mid);margin-top:3px}
+#cb-root .cb-tag{display:inline-block;background:var(--c-pale);color:var(--c-slate);border-radius:99px;padding:3px 11px;font-size:11.5px;font-weight:500;margin:3px 5px 3px 0}
+#cb-root .cb-tag.sh{background:var(--c-slate);color:#fff}
+#cb-root .cb-badge{font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--c-gold);border:1px solid var(--c-gold);border-radius:99px;padding:3px 9px}
+#cb-root .cb-q{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c-mid);margin:12px 0 2px}
+#cb-root .cb-a{font-size:14px;color:var(--c-dark);line-height:1.55}
+#cb-root .cb-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+#cb-root .cb-l{display:block;font-size:12.5px;font-weight:600;color:var(--c-dark);margin:12px 0 4px}
+#cb-root .cb-in{width:100%;padding:10px 12px;border:1px solid var(--c-stone);border-radius:6px;font:13px 'DM Sans',sans-serif;background:var(--c-off);color:var(--c-black);outline:none;transition:border-color .2s}
+#cb-root .cb-in:focus{border-color:var(--c-sky);background:#fff}
+#cb-root textarea.cb-in{resize:vertical}
+#cb-root .cb-btn{background:var(--c-black);color:#fff;font:600 13px 'DM Sans',sans-serif;padding:12px 22px;border-radius:6px;border:none;cursor:pointer;margin-top:14px;transition:opacity .2s}
+#cb-root .cb-btn:hover{opacity:.8}
+#cb-root .cb-btn:disabled{opacity:.45;cursor:default}
+#cb-root .cb-btn.pale{background:var(--c-pale);color:var(--c-slate)}
+#cb-root .cb-btn.sm{padding:8px 16px;font-size:12px;margin-top:0}
+#cb-root .cb-msg{font-size:13px;margin-bottom:14px;padding:11px 14px;border-radius:8px;background:#EEF3F8;color:var(--c-slate)}
+#cb-root .cb-msg.bad{background:#FBECEB;color:#B0433A}
+#cb-root .cb-ct{display:flex;gap:24px;flex-wrap:wrap;margin-top:12px;font-size:14px}
+#cb-root .cb-ct a{color:var(--c-slate);font-weight:600}
+#cb-root .cb-agree{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:1.45;margin:16px 0 0}
+#cb-root .cb-empty{text-align:center;color:var(--c-mid);padding:40px 12px;font-size:14px;line-height:1.6}
+#cb-root .cb-note{font-size:12px;color:var(--c-mid);margin-top:12px;line-height:1.5}
+@media(max-width:700px){#cb-root .cb-grid{grid-template-columns:1fr}#cb-root .cb-hed{font-size:38px}}
