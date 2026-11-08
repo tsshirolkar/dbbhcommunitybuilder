@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dBBH · Community Builder</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{--black:#0D0D0D;--dark:#2B2B2B;--mid:#888;--pale-blue:#C9D9E8;--sky:#7BAFD4;--slate:#2E4A5C;--gold:#C9A020;--cream:#F2EDE6;--offwhite:#F8F6F2;--white:#FFF;--stone:#E0DAD2}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--offwhite);color:var(--black)}
+nav{position:fixed;top:0;left:0;right:0;z-index:300;background:rgba(248,246,242,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--stone);padding:0 52px;display:flex;align-items:center;justify-content:space-between;height:60px}
+.nav-logo{display:flex;align-items:baseline;text-decoration:none}
+.nl-d{font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;color:var(--sky);line-height:1}
+.nl-bbh{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--black);line-height:1}
+.nav-links{display:flex;gap:2px}
+.nb{background:none;border:none;font:500 13px 'DM Sans',sans-serif;color:var(--mid);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s}
+.nb:hover,.nb.active{color:var(--slate);background:var(--pale-blue)}
+.nb.active{font-weight:600}
+.nav-right{display:flex;gap:8px}
+.n-login{background:none;border:1px solid var(--stone);font:600 12px 'DM Sans',sans-serif;color:var(--dark);padding:7px 16px;border-radius:6px;cursor:pointer;text-decoration:none}
+.n-login:hover{border-color:var(--sky);color:var(--sky)}
+.n-join{background:var(--black);border:none;font:600 12px 'DM Sans',sans-serif;color:#fff;padding:8px 18px;border-radius:6px;cursor:pointer}
+.n-join:hover{opacity:.8}
+.wrap{max-width:900px;margin:0 auto;padding:110px 28px 70px;min-height:100vh}
+.eyebrow{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--sky);display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--gold)}
+.page-hed{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:300;letter-spacing:-.02em;line-height:1.05;margin-bottom:8px}
+.page-hed i{color:var(--sky)}
+.sub{font-size:15px;color:var(--mid);line-height:1.7;max-width:560px;margin-bottom:26px}
+.btn-dark{background:var(--black);color:#fff;font:600 13px 'DM Sans',sans-serif;padding:12px 24px;border-radius:6px;border:none;cursor:pointer}
+.btn-dark:hover{opacity:.8}.btn-dark:disabled{opacity:.45;cursor:default}
+.btn-pale{background:var(--pale-blue);color:var(--slate);font:600 13px 'DM Sans',sans-serif;padding:12px 24px;border-radius:6px;border:none;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{padding:7px 13px;border-radius:999px;border:1px solid var(--stone);background:#fff;font:12.5px 'DM Sans',sans-serif;color:var(--dark);cursor:pointer;transition:all .15s}
+.chip.on{background:var(--slate);border-color:var(--slate);color:#fff}
+.lbl{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);margin:6px 0 8px}
+.card{background:#fff;border:1px solid var(--stone);border-radius:10px;padding:22px;margin-bottom:14px;transition:box-shadow .2s}
+.card:hover{box-shadow:0 8px 30px rgba(0,0,0,.07)}
+.hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.nm{font-family:'Cormorant Garamond',serif;font-size:26px;line-height:1.1}
+.meta{font-size:12.5px;color:var(--mid);margin-top:3px}
+.tag{display:inline-block;background:var(--pale-blue);color:var(--slate);border-radius:99px;padding:3px 11px;font-size:11.5px;font-weight:500;margin:3px 5px 3px 0}
+.tag.sh{background:var(--slate);color:#fff}
+.badge{font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:99px;padding:3px 9px}
+.q{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);margin:12px 0 2px}
+.a{font-size:14px;color:var(--dark);line-height:1.55}
+.cta{margin-top:16px}
+.empty{text-align:center;color:var(--mid);padding:40px 10px;font-size:14px}
+.f-input,.f-select,textarea{width:100%;padding:10px 14px;border:1px solid var(--stone);border-radius:6px;font:13px 'DM Sans',sans-serif;background:#fff;color:var(--black);outline:none;margin:4px 0 14px}
+.f-input:focus,.f-select:focus,textarea:focus{border-color:var(--sky)}
+label{font-size:12.5px;font-weight:600;color:var(--dark)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.err{color:#B0433A;font-size:12.5px;margin:0 0 12px}.ok{color:var(--slate);font-size:12.5px;font-weight:600;margin:0 0 12px}
+.authbox{max-width:440px;margin:0 auto}
+.ct{display:flex;gap:22px;flex-wrap:wrap;margin-top:12px;font-size:14px}
+.ct a{color:var(--slate);font-weight:600}
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--black);color:#fff;font-size:13px;padding:12px 20px;border-radius:8px;z-index:400;max-width:90vw;display:none}
+[hidden]{display:none!important}
+@media(max-width:900px){nav{flex-wrap:wrap;height:auto;padding:10px 14px;row-gap:4px}.nav-links{order:3;width:100%;overflow-x:auto}.nb{padding:6px 8px;font-size:11.5px;white-space:nowrap}.wrap{padding:120px 16px 60px}.page-hed{font-size:38px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+<a class="nav-logo" href="./"><span class="nl-d">d</span><span class="nl-bbh">BBH</span></a>
+<div class="nav-links" id="links" hidden></div>
+<div class="nav-right"><button class="n-join" id="out" hidden>Log out</button></div>
+</nav>
+
+<div class="wrap">
+<div id="auth" hidden>
+<div class="authbox">
+<div class="eyebrow">Members only</div>
+<h1 class="page-hed">Community <i>Builder</i></h1>
+<p class="sub">Find dBBH members with similar professional interests and connect. Log in with your Duke email.</p>
+<div id="st1"><label>Duke email</label><input class="f-input" id="em" type="email" placeholder="netid@duke.edu"><button class="btn-dark" id="send">Email me a login code</button></div>
+<div id="st2" hidden><p class="ok">We emailed you a code. Type it below to log in.</p><label>Code</label><input class="f-input" id="cd" maxlength="10" inputmode="numeric"><button class="btn-dark" id="ver">Log in</button> <button class="btn-pale" id="back">Use a different email</button></div>
+<p class="err" id="aerr"></p>
+</div>
+</div>
+
+<div id="app" hidden>
+<p class="err" id="banner" style="background:#fbeceb;padding:12px 14px;border-radius:8px" hidden></p>
+<section id="p-dir">
+<div class="eyebrow">Community directory</div>
+<h1 class="page-hed">Find your <i>people</i></h1>
+<p class="sub">Members with the most professional interests in common with you show up first. Choose “Let’s Chat!” and, if they choose it too, you both get each other’s Duke email and phone number.</p>
+<div class="chips" id="cls"></div>
+<div class="chips" id="fint"></div>
+<div id="list"></div>
+</section>
+
+<section id="p-mat" hidden>
+<div class="eyebrow">Your matches</div>
+<h1 class="page-hed">Mutual <i>matches</i></h1>
+<p class="sub">These members chose “Let’s Chat!” on you too. Reach out by email or text.</p>
+<div id="mlist"></div>
+</section>
+
+<section id="p-grp" hidden>
+<div class="eyebrow">Slack</div>
+<h1 class="page-hed">Interest <i>groups</i></h1>
+<p class="sub">Placeholder channels for now. Add your real Slack invite links in the GROUPS list near the bottom of this file.</p>
+<div id="glist"></div>
+</section>
+
+<section id="p-me" hidden>
+<div class="eyebrow">Your profile</div>
+<h1 class="page-hed">Tell us <i>about you</i></h1>
+<p class="sub">Update this anytime. Your interests decide who is suggested to you, and you to them.</p>
+<div class="card">
+<div class="grid">
+<div><label>Name</label><input class="f-input" id="f-name"></div>
+<div><label>Class year</label><select class="f-select" id="f-class"><option value="">Select</option><option>2027</option><option>2028</option><option>2029</option><option>2030</option></select></div>
+<div><label>Major</label><input class="f-input" id="f-major"></div>
+<div><label>Minor</label><input class="f-input" id="f-minor" placeholder="Optional"></div>
+<div><label>Certificates</label><input class="f-input" id="f-cert" placeholder="Optional"></div>
+<div><label>Duke email</label><input class="f-input" id="f-email" disabled></div>
+<div><label>Phone number</label><input class="f-input" id="f-phone" type="tel" placeholder="Shared only after a match"></div>
+</div>
+<label>Professional interests <span id="pcount" style="color:var(--mid);font-weight:400"></span></label>
+<div class="chips" id="pint" style="margin-top:8px"></div>
+<label>Why I joined dBBH in 3 words</label><input class="f-input" id="f-three" placeholder="e.g. curious, collaborative, driven">
+<label>Dream role in healthcare</label><input class="f-input" id="f-dream">
+<label>Ask me about…</label><input class="f-input" id="f-ask" placeholder="e.g. hobbies">
+<label>If I could fix one problem in the healthcare economy, I would…</label><input class="f-input" id="f-fix">
+<label>Short bio</label><textarea id="f-bio" rows="3"></textarea>
+<label style="display:flex;gap:8px;align-items:flex-start;font-weight:400;margin-bottom:12px"><input type="checkbox" id="f-agree" style="margin-top:3px"> <span>I understand my Duke email and phone number are shared only with members I match with, and the rest of my profile is visible to logged-in dBBH members.</span></label>
+<p class="err" id="ferr"></p>
+<button class="btn-dark" id="save">Save profile</button>
+</div>
+</section>
+</div>
+</div>
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL="https://texrckvhyiswwiyrbini.supabase.co";
+var SUPABASE_ANON_KEY="sb_publishable_II0luVeBzLxWbH4_ywXu4Q_6qiWhCVe";
+var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+var INTERESTS=['Venture Capital','Investment Banking','Private Equity','Insurance','Pharmaceuticals','Biotech','Clinical','Research','Drug Design','Wearables/Technology','Telehealth','Medical Devices','Consulting','Health Policy'];
+var CLASSES=[2027,2028,2029,2030];
+var GROUPS={Social:[['#social-outings','Meetups around Durham'],['#food-and-coffee','Coffee runs and dinners']],Work:[['#venture-and-banking','VC, PE and IB prep'],['#biotech-pharma','Biotech and pharma'],['#clinical-research','Clinical work and research'],['#health-tech','Wearables, telehealth and digital health']]};
+var BLOCK=['idiot','stupid','hate','dumb'];
+var TABS=[['dir','Directory'],['mat','Matches'],['grp','Groups'],['me','My Profile']];
+var S={tab:'dir',cls:0,fint:[],U:null,me:null,dir:[],liked:{},matches:[],pint:[],email:''};
+
+function $(i){return document.getElementById(i)}
+function esc(s){var d=document.createElement('div');d.textContent=s==null?'':s;return d.innerHTML}
+function toggle(a,v){var k=a.indexOf(v);if(k>-1)a.splice(k,1);else a.push(v)}
+function toast(t){var e=$('toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(function(){e.style.display='none'},5000)}
+function chips(el,items,sel,fn,single){
+  $(el).innerHTML=items.map(function(i){var v=single?i[0]:i,l=single?i[1]:i;return '<button type="button" class="chip'+(sel.indexOf(v)>-1?' on':'')+'" data-v="'+esc(v)+'">'+esc(l)+'</button>'}).join('');
+  Array.prototype.forEach.call($(el).querySelectorAll('.chip'),function(b){b.onclick=function(){fn(b.getAttribute('data-v'))}});
+}
+
+/* ---------- AUTH ---------- */
+function emailOk(e){return /^[a-z0-9._-]+@duke\.edu$/i.test(e)}
+$('send').onclick=async function(){
+  var e=$('em').value.trim().toLowerCase();$('aerr').textContent='';
+  if(!emailOk(e)){$('aerr').textContent='Please use your @duke.edu email.';return}
+  $('send').disabled=true;
+  var r=await sb.auth.signInWithOtp({email:e,options:{emailRedirectTo:location.origin+location.pathname}});
+  $('send').disabled=false;
+  if(r.error){$('aerr').textContent=r.status===429||/rate/i.test(r.error.message)?'Too many login emails right now. Please wait a minute and try again.':r.error.message;return}
+  S.email=e;$('st1').hidden=true;$('st2').hidden=false;
+};
+$('ver').onclick=async function(){
+  $('aerr').textContent='';
+  var r=await sb.auth.verifyOtp({email:S.email,token:$('cd').value.trim(),type:'email'});
+  if(r.error)$('aerr').textContent='That code did not work or has expired. Request a new one. ('+r.error.message+')';
+};
+$('back').onclick=function(){$('st2').hidden=true;$('st1').hidden=false;$('aerr').textContent=''};
+$('out').onclick=function(){sb.auth.signOut()};
+var lastId=null;
+sb.auth.onAuthStateChange(function(_e,session){
+  var u=session?session.user:null,id=u?u.id:null;
+  if(id===lastId&&_e!=='SIGNED_IN')return;
+  lastId=id;S.U=u;setTimeout(start,0);
+});
+
+async function start(){
+  $('auth').hidden=!!S.U;$('app').hidden=!S.U;$('links').hidden=!S.U;$('out').hidden=!S.U;
+  if(!S.U){return}
+  await load();
+}
+async function load(){
+  var r=await Promise.all([
+    sb.from('cb_profiles').select('*').eq('id',S.U.id).maybeSingle(),
+    sb.rpc('cb_directory'),
+    sb.from('cb_likes').select('to_id'),
+    sb.rpc('cb_my_matches')]);
+  var bad=r.filter(function(x){return x.error})[0];
+  $('banner').hidden=!bad;
+  if(bad)$('banner').textContent='Setup problem: '+bad.error.message+'. Make sure setup.sql was run in Supabase (new version with cb_ tables).';
+  S.me=r[0].data;S.dir=r[1].data||[];S.liked={};(r[2].data||[]).forEach(function(x){S.liked[x.to_id]=1});S.matches=r[3].data||[];
+  if(!S.me)S.tab='me';
+  fillForm();render();
+}
+
+/* ---------- DIRECTORY ---------- */
+function shared(m){var mine=S.me?S.me.interests||[]:[];return (m.interests||[]).filter(function(x){return mine.indexOf(x)>-1})}
+function sim(m){var a=(m.interests||[]).length,b=S.me?(S.me.interests||[]).length:0,s=shared(m).length;return [s,s/((a+b-s)||1)]}
+function card(m){
+  var sh=shared(m),isM=S.matches.some(function(x){return x.id===m.id}),sent=S.liked[m.id];
+  var ed=[m.major?'Major: '+m.major:'',m.minor?'Minor: '+m.minor:'',m.certificates?'Certificates: '+m.certificates:''].filter(Boolean).join(' · ');
+  var btn=isM?'<button class="btn-pale" disabled>Matched ✓ See Matches</button>':sent?'<button class="btn-pale" disabled>Request sent</button>':'<button class="btn-dark" data-chat="'+m.id+'">Let’s Chat!</button>';
+  return '<div class="card"><div class="hd"><div><div class="nm">'+esc(m.name)+'</div><div class="meta">Class of '+esc(m.class_year)+' · '+esc(ed)+'</div></div>'+(sh.length?'<span class="badge">Suggested for you · '+sh.length+' in common</span>':'')+'</div>'
+  +'<div style="margin-top:10px">'+(m.interests||[]).map(function(x){return '<span class="tag'+(sh.indexOf(x)>-1?' sh':'')+'">'+esc(x)+'</span>'}).join('')+'</div>'
+  +(m.three_words?'<div class="q">Why I joined dBBH in 3 words</div><div class="a">'+esc(m.three_words)+'</div>':'')
+  +(m.dream_role?'<div class="q">Dream role</div><div class="a">'+esc(m.dream_role)+'</div>':'')
+  +(m.ask_me?'<div class="q">Ask me about…</div><div class="a">'+esc(m.ask_me)+'</div>':'')
+  +(m.fix_problem?'<div class="q">If I could fix one problem in the healthcare economy, I would…</div><div class="a">'+esc(m.fix_problem)+'</div>':'')
+  +(m.bio?'<div class="q">Bio</div><div class="a">'+esc(m.bio)+'</div>':'')
+  +'<div class="cta">'+btn+'</div></div>';
+}
+function dirRender(){
+  chips('cls',[[0,'All classes']].concat(CLASSES.map(function(c){return [c,'Class of '+c]})),[S.cls],function(v){S.cls=+v;render()},true);
+  chips('fint',INTERESTS,S.fint,function(v){toggle(S.fint,v);render()});
+  if(!S.me){$('list').innerHTML='<div class="empty">Create your profile first, then members with similar interests will show up here.</div>';return}
+  var d=S.dir.filter(function(m){return (!S.cls||m.class_year===S.cls)&&(!S.fint.length||(m.interests||[]).some(function(x){return S.fint.indexOf(x)>-1}))});
+  d.sort(function(a,b){var x=sim(a),y=sim(b);return y[0]-x[0]||y[1]-x[1]||String(a.name).localeCompare(b.name)});
+  $('list').innerHTML=d.length?d.map(card).join(''):'<div class="empty">No members match these filters yet.</div>';
+  Array.prototype.forEach.call($('list').querySelectorAll('[data-chat]'),function(b){b.onclick=function(){chat(b.getAttribute('data-chat'))}});
+}
+async function chat(id){
+  var r=await sb.from('cb_likes').insert({from_id:S.U.id,to_id:id});
+  if(r.error&&r.error.code!=='23505'){toast(r.error.message);return}
+  S.liked[id]=1;
+  var m=await sb.rpc('cb_my_matches');S.matches=m.data||[];
+  toast(S.matches.some(function(x){return x.id===id})?'It’s a match! Their Duke email and phone are under Matches.':'Request sent. If they choose Let’s Chat! too, you’ll both get each other’s contact info.');
+  render();
+}
+
+/* ---------- MATCHES / GROUPS ---------- */
+function matchRender(){
+  $('mlist').innerHTML=S.matches.length?S.matches.map(function(m){
+    return '<div class="card"><div class="nm">'+esc(m.name)+'</div><div class="meta">Class of '+esc(m.class_year)+' · '+esc(m.major)+'</div>'
+    +'<div class="ct"><span>Duke email: <a href="mailto:'+esc(m.duke_email)+'">'+esc(m.duke_email)+'</a></span><span>Phone: <a href="tel:'+esc(m.phone)+'">'+esc(m.phone)+'</a></span></div></div>'}).join('')
+  :'<div class="empty">No matches yet. Choose “Let’s Chat!” on a few profiles. A match appears here once they choose it on you too.</div>';
+}
+function groupRender(){
+  $('glist').innerHTML=Object.keys(GROUPS).map(function(k){
+    return '<div class="lbl">'+k+'</div>'+GROUPS[k].map(function(g){
+      return '<div class="card hd" style="align-items:center"><div><div class="nm" style="font-size:22px">'+esc(g[0])+'</div><div class="meta">'+esc(g[1])+'</div></div><a class="n-login" href="'+(g[2]||'#')+'" target="_blank" rel="noopener">Join on Slack</a></div>'}).join('')}).join('');
+}
+
+/* ---------- PROFILE ---------- */
+function fillForm(){
+  var m=S.me||{};
+  $('f-email').value=S.U?S.U.email:'';
+  ['name','major','minor','phone','three','dream','ask','fix','bio'].forEach(function(k){
+    var map={name:'name',major:'major',minor:'minor',phone:'phone',three:'three_words',dream:'dream_role',ask:'ask_me',fix:'fix_problem',bio:'bio'};
+    $('f-'+k).value=m[map[k]]||''});
+  $('f-cert').value=m.certificates||'';$('f-agree').checked=!!S.me;$('f-class').value=m.class_year||'';
+  S.pint=(m.interests||[]).slice();
+}
+function profRender(){
+  chips('pint',INTERESTS,S.pint,function(v){toggle(S.pint,v);profRender()});
+  $('pcount').textContent='('+S.pint.length+' selected)';
+}
+$('save').onclick=async function(){
+  var g=function(i){return $(i).value.trim()};
+  var f={id:S.U.id,duke_email:S.U.email.toLowerCase(),name:g('f-name'),phone:g('f-phone'),class_year:+g('f-class')||null,major:g('f-major'),minor:g('f-minor'),certificates:g('f-cert'),interests:S.pint.slice(),three_words:g('f-three'),dream_role:g('f-dream'),ask_me:g('f-ask'),fix_problem:g('f-fix'),bio:g('f-bio')};
+  var all=[f.name,f.major,f.minor,f.certificates,f.three_words,f.dream_role,f.ask_me,f.fix_problem,f.bio].join(' ').toLowerCase();
+  var bad=BLOCK.filter(function(w){return all.indexOf(w)>-1}),e=$('ferr');
+  if(!f.name||!f.class_year||!f.major||!f.phone){e.textContent='Name, class year, major and phone number are required.';return}
+  if(!$('f-agree').checked){e.textContent='Please check the box to confirm how your info is shared.';return}
+  if(!f.interests.length){e.textContent='Pick at least one professional interest.';return}
+  if(bad.length){e.textContent='Please remove: '+bad.join(', ');return}
+  e.textContent='';$('save').disabled=true;
+  var r=await sb.from('cb_profiles').upsert(f);
+  $('save').disabled=false;
+  if(r.error){e.textContent=r.error.message;return}
+  toast('Profile saved.');S.tab='dir';await load();
+};
+
+/* ---------- ROUTING ---------- */
+function render(){
+  $('links').innerHTML=TABS.map(function(t){return '<button class="nb'+(S.tab===t[0]?' active':'')+'" data-t="'+t[0]+'">'+t[1]+(t[0]==='mat'&&S.matches.length?' ('+S.matches.length+')':'')+'</button>'}).join('');
+  Array.prototype.forEach.call($('links').querySelectorAll('.nb'),function(b){b.onclick=async function(){S.tab=b.getAttribute('data-t');if(S.tab==='mat'||S.tab==='dir'){var m=await sb.rpc('cb_my_matches');S.matches=m.data||S.matches}render()}});
+  TABS.forEach(function(t){$('p-'+t[0]).hidden=S.tab!==t[0]});
+  dirRender();matchRender();groupRender();profRender();
+}
+</script>
+</body></html>
