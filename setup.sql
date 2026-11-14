@@ -4,16 +4,17 @@
 
 create extension if not exists pgcrypto with schema extensions;
 
--- Remove functions from earlier versions (their tables are left alone)
-drop function if exists public.cb_signup(text, text);
-drop function if exists public.cb_login(text, text);
-drop function if exists public.cb_logout(text);
-drop function if exists public.cb_new_session(uuid);
-drop function if exists public.cb_uid(text);
-drop function if exists public.cb_overview(text);
-drop function if exists public.cb_save_profile(text, jsonb);
-drop function if exists public.cb_request_chat(text, uuid);
-drop function if exists public.cb_delete_profile(text);
+-- Remove every cb_ function from earlier versions, whatever its signature (tables are left alone)
+do $$
+declare r record;
+begin
+  for r in select p.oid::regprocedure as sig from pg_proc p
+           join pg_namespace n on n.oid = p.pronamespace
+           where n.nspname = 'public' and p.proname like 'cb\_%' escape '\'
+  loop
+    execute 'drop function if exists ' || r.sig || ' cascade';
+  end loop;
+end $$;
 
 create table if not exists public.cb_people (
   id uuid primary key default gen_random_uuid(),
@@ -149,3 +150,12 @@ revoke all on function public.cb_save_profile(text,jsonb), public.cb_overview(te
   public.cb_request_chat(text,uuid), public.cb_delete_profile(text) from public;
 grant execute on function public.cb_save_profile(text,jsonb), public.cb_overview(text),
   public.cb_request_chat(text,uuid), public.cb_delete_profile(text) to anon, authenticated;
+
+-- Make the API see the new functions right away
+notify pgrst, 'reload schema';
+
+-- Check: this should list 5 rows (cb_uid, cb_save_profile, cb_overview, cb_request_chat, cb_delete_profile)
+select proname, pg_get_function_arguments(oid) as args
+from pg_proc
+where pronamespace = 'public'::regnamespace and proname like 'cb\_%' escape '\'
+order by proname;

@@ -17,6 +17,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:300;background:rgba(248,246,242,
 .nl-bbh{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--black);line-height:1}
 .n-home{border:1px solid var(--stone);font:600 12px 'DM Sans',sans-serif;color:var(--dark);padding:7px 16px;border-radius:6px;text-decoration:none}
 .n-home:hover{border-color:var(--sky);color:var(--sky)}
+#demo-note{font-size:12.5px;background:#EEF3F8;color:var(--slate);border-radius:8px;padding:10px 14px;margin-bottom:22px}#demo-note a{color:var(--slate);font-weight:600}
 main{max-width:900px;margin:0 auto;padding:110px 28px 70px;min-height:100vh}
 @media(max-width:900px){nav{padding:0 16px}main{padding:96px 16px 60px}}
 </style>
@@ -27,14 +28,21 @@ main{max-width:900px;margin:0 auto;padding:110px 28px 70px;min-height:100vh}
 <a class="nav-logo" href="./"><span class="nl-d">d</span><span class="nl-bbh">BBH</span></a>
 <a class="n-home" id="home" href="#" hidden>← dBBH home</a>
 </nav>
-<main><div id="cb-root"></div></main>
+<main><div id="demo-note" hidden>Prototype preview. Profiles are saved only in this browser, and the sample members are fictional. <a href="#" id="demo-reset">Reset demo</a></div><div id="cb-root"></div></main>
 <noscript><p style="padding:100px 28px">Please turn on JavaScript to use the Community Builder.</p></noscript>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script src="community-builder.js"></script>
+<script src="cb-local.js"></script>
 <script>
-var h=(window.CB_CONFIG||{}).homeUrl;if(h){var a=document.getElementById('home');a.href=h;a.hidden=false}
-CBuilder.init();
+(function(){
+var c=window.CB_CONFIG||{},live=c.mode==='supabase';
+if(c.homeUrl){var a=document.getElementById('home');a.href=c.homeUrl;a.hidden=false}
+function go(){live?CBuilder.init():CBuilder.init({client:CBLocal.client()})}
+if(live){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';s.onload=go;document.head.appendChild(s)}
+else{document.getElementById('demo-note').hidden=false;
+document.getElementById('demo-reset').onclick=function(e){e.preventDefault();if(confirm('Clear your demo profile and restore the sample members?')){CBLocal.reset();location.reload()}};
+go()}
+})();
 </script>
 </body></html>

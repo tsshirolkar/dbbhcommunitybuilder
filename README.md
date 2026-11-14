@@ -1,40 +1,40 @@
-# dBBH Community Builder (test version)
+# dBBH Community Builder
 
-A networking site for Duke Business Behind Health. Members create a profile, browse other members ranked by shared professional interests, and choose "Let's Chat!". When two members both choose each other, each sees the other's Duke email and phone number.
+A networking page for Duke Business Behind Health members. Members create a profile, browse others ranked by shared professional interests, and choose "Let's Chat!". When two members choose each other, each sees the other's Duke email and phone number.
 
-**This test version has no login, no passwords and no email of any kind.** Creating a profile is the sign-up. The profile is tied to the browser it was created in.
-
-## Files (all go in the top folder of the repo)
-| File | What it is |
+## Files (all in the repo's top folder)
+| File | Purpose |
 |---|---|
-| `index.html` | The standalone page (logo bar plus the Community Builder) |
-| `community-builder.js` | The whole feature, self-contained |
-| `community-builder.css` | Its styles, scoped to `#cb-root` |
-| `config.js` | Supabase address and key (edit here only) |
-| `setup.sql` | Run once in Supabase |
-| `README.md` | These notes |
+| `index.html` | Standalone page (logo bar + Community Builder) |
+| `community-builder.js` / `.css` | The whole feature. Scoped to `#cb-root`, so it drops into any page |
+| `cb-local.js` | Prototype backend: stores data in the visitor's browser and includes 8 fictional sample members |
+| `config.js` | Switch between prototype and live (`mode`) |
+| `setup.sql` | Supabase database setup, only needed when you go live |
 
-## Set up (one time)
-1. **Database:** Supabase → SQL Editor → paste all of `setup.sql` → Run. It only creates `cb_` tables and functions, so it won't touch your main site's tables.
-2. **Upload** all files above to your GitHub repo's top folder (replace the old `index.html`).
-3. **GitHub Pages:** Settings → Pages → Deploy from a branch → `main` → `/ (root)`.
+## Publish on GitHub Pages (no database needed)
+1. Upload every file above to the top folder of a GitHub repo.
+2. Settings → Pages → Deploy from a branch → `main` → `/ (root)`.
+3. Open `https://YOUR-USERNAME.github.io/YOUR-REPO/`.
 
-Site address: `https://YOUR-USERNAME.github.io/YOUR-REPO/`
+## Demo notes
+- Each visitor's profile lives only in their own browser. Nothing is shared between devices or people.
+- Sample members 1 to 4 (Maya, Jordan, Priya, Ethan) always choose "Let's Chat!" back, so you can show the match screen instantly. The other four do not, so you can show a pending request.
+- "Reset demo" at the top of the page clears your profile and restores the sample data.
+- Sample emails and phone numbers are fake.
 
-## Running a test
-- Each tester opens the site on their own device and creates a profile. To test several people from one computer, use separate browsers or private windows.
-- Matching test: person A and person B each choose "Let's Chat!" on each other. Both then see each other's email and phone under Matches.
-- Clean up afterwards: testers can press "Delete my profile", or run this in Supabase's SQL Editor to clear everything: `delete from public.cb_people;`
+## Going live with Supabase (later)
+1. Supabase → SQL Editor → paste all of `setup.sql` → Run. It only creates `cb_` tables and functions, so it is safe inside the main dBBH project. The last query should list 5 functions.
+2. In `config.js` set `mode: "supabase"` and fill in `url` and `key` (the publishable key). Nothing else changes, because `cb-local.js` and the database expose the same five functions.
 
-## What this test version does not have (add later)
-- **No identity check.** Anyone can create a profile using any @duke.edu address, including someone else's.
-- **No sign-in from other devices.** If someone clears their browser data or switches devices, they create a new profile. A profile whose email is already taken cannot be recreated until an admin deletes the old one: `delete from public.cb_people where duke_email = 'netid@duke.edu';`
-- The blocked-word filter only runs in the browser.
-
-## Moving it into the main dBBH site later
-The feature is one script plus one stylesheet that mounts into any element:
+## Merging into the main dBBH site
 1. Copy `community-builder.css` and `community-builder.js` into the main site and link them.
-2. Put `<div id="cb-root"></div>` where the feature should appear (for example, the portal's Directory tab).
-3. Call `CBuilder.init({ mount: '#cb-root', client: sb, heading: false })`. Passing the main site's existing Supabase client (`sb`) means no second connection and no `config.js` is needed.
+2. Add `<div id="cb-root"></div>` where it should appear (for example a Members or Portal tab).
+3. If the main site already has a Supabase client (say `sb`), run `setup.sql` in that project and call:
+   `CBuilder.init({ mount: '#cb-root', client: sb, heading: false })`
+   Not using Supabase on the main site? Create a project, include the supabase-js script, and call `CBuilder.init({ mount:'#cb-root', url:'...', key:'...', heading:false })`.
+4. The page fonts and colors reuse the main site's CSS variables when they exist, so it should match the dBBH styling.
 
-When you add authentication, the sign-in step replaces the private key kept in the browser (the `token` in `community-builder.js` and the `cb_uid` function in `setup.sql`). The profile, matching and directory code stays the same.
+## Before opening it to all members
+- Add sign-in (Duke email magic link or SSO). Today anyone can claim any @duke.edu address. Replace the browser token in `cb_uid` (`setup.sql`) with `auth.uid()`.
+- Move the blocked-word filter into the database function.
+- Add a way to report or remove a profile, and a short privacy note about how emails and phone numbers are shared.

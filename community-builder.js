@@ -111,7 +111,7 @@ var A={
     grab();var d=S.draft||{},t=function(k){return String(d[k]!=null?d[k]:fv(k)).trim()};
     var f={name:t('name'),duke_email:t('duke_email').toLowerCase(),phone:t('phone'),class_year:+t('class_year')||null,major:t('major'),minor:t('minor'),certificates:t('certificates'),interests:S.pint.slice(),three_words:t('three_words'),dream_role:t('dream_role'),ask_me:t('ask_me'),fix_problem:t('fix_problem'),bio:t('bio')};
     var all=[f.name,f.major,f.minor,f.certificates,f.three_words,f.dream_role,f.ask_me,f.fix_problem,f.bio].join(' ').toLowerCase();
-    var bad=BLOCK.filter(function(x){return all.indexOf(x)>-1});
+    var bad=BLOCK.filter(function(x){return new RegExp('\\b'+x+'\\b').test(all)});
     if(!f.name||!f.class_year||!f.major||!f.phone)return say('Name, class year, major and phone number are required.',1);
     if(!S.me&&!/^[a-z0-9._-]+@duke\.edu$/i.test(f.duke_email))return say('Please use your @duke.edu email.',1);
     if(!(d.agree!=null?d.agree:!!S.me))return say('Please check the box to confirm how your info is shared.',1);
