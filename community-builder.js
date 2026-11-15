@@ -54,7 +54,7 @@ function card(m){
   var btn=isM?'<button class="cb-btn pale" disabled>Matched ✓ See Matches</button>':sent?'<button class="cb-btn pale" disabled>Request sent</button>':'<button class="cb-btn" data-a="chat" data-v="'+esc(m.id)+'">Let’s Chat!</button>';
   return '<div class="cb-card"><div class="cb-top"><div><div class="cb-nm">'+esc(m.name)+'</div><div class="cb-meta">Class of '+esc(m.class_year)+(ed?' · '+esc(ed):'')+'</div></div>'+(sh.length?'<span class="cb-badge">Suggested for you · '+sh.length+' in common</span>':'')+'</div>'
   +'<div style="margin-top:8px">'+(m.interests||[]).map(function(x){return '<span class="cb-tag'+(sh.indexOf(x)>-1?' sh':'')+'">'+esc(x)+'</span>'}).join('')+'</div>'
-  +(m.three_words?'<div class="cb-q">Why I joined dBBH in 3 words</div><div class="cb-a">'+esc(m.three_words)+'</div>':'')
+  +(m.three_words?'<div class="cb-q">Describe yourself in 3 words</div><div class="cb-a">'+esc(m.three_words)+'</div>':'')
   +(m.dream_role?'<div class="cb-q">Dream role</div><div class="cb-a">'+esc(m.dream_role)+'</div>':'')
   +(m.ask_me?'<div class="cb-q">Ask me about…</div><div class="cb-a">'+esc(m.ask_me)+'</div>':'')
   +(m.fix_problem?'<div class="cb-q">If I could fix one problem in the healthcare economy, I would…</div><div class="cb-a">'+esc(m.fix_problem)+'</div>':'')
@@ -75,7 +75,7 @@ function profileView(){
   +inp('duke_email','Duke email','netid@duke.edu','email',!!S.me)
   +inp('phone','Phone number','Shared only after a match','tel')+'</div>'
   +'<label class="cb-l">Professional interests ('+S.pint.length+' selected)</label><div class="cb-chips">'+INTERESTS.map(function(i){return chip(i,S.pint.indexOf(i)>-1,'pint',i)}).join('')+'</div>'
-  +'<div class="cb-grid">'+inp('three_words','Why I joined dBBH in 3 words','e.g. curious, collaborative, driven')+inp('dream_role','Dream role in healthcare')+inp('ask_me','Ask me about…','e.g. hobbies')+inp('fix_problem','If I could fix one problem in the healthcare economy, I would…')+'</div>'
+  +'<div class="cb-grid">'+inp('three_words','Describe yourself in 3 words','e.g. curious, collaborative, driven')+inp('dream_role','Dream role in healthcare')+inp('ask_me','Ask me about…','e.g. hobbies')+inp('fix_problem','If I could fix one problem in the healthcare economy, I would…')+'</div>'
   +'<label class="cb-l">Short bio</label><textarea class="cb-in" id="cb-bio" rows="3" maxlength="600">'+esc(fv('bio'))+'</textarea>'
   +'<label class="cb-agree"><input type="checkbox" id="cb-agree"'+(agree?' checked':'')+'><span>I understand my Duke email and phone number are shared only with members I match with, and the rest of my profile is visible to everyone who uses this site.</span></label>'
   +'<button class="cb-btn" data-a="save"'+(S.busy?' disabled':'')+'>'+(S.me?'Save profile':'Create my profile')+'</button>'
